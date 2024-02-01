@@ -1,0 +1,23 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "This repository is solution for RS School NodeJS task https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/file-manager/assignment.md",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IrinaOsp/NodeJS_file-manager.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "IrinaOsp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IrinaOsp/NodeJS_file-manager/issues"
+  },
+  "homepage": "https://github.com/IrinaOsp/NodeJS_file-manager#readme"
+}
