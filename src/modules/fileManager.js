@@ -1,10 +1,12 @@
 import os from "os";
 import readline from "readline";
+import FileSystem from "./fileSystem.js";
 
 export default class FileManager {
   constructor(username) {
     this.username = username;
-    this.currentPath = os.homedir();
+    this.homePath = os.homedir();
+    this.fileSystem = new FileSystem(this.homePath);
   }
 
   startProject() {
@@ -19,10 +21,11 @@ export default class FileManager {
       output: process.stdout,
     });
 
-    rl.on("line", (input) => {
-      console.log(`You entered: ${input}`);
+    rl.on("line", async (input) => {
       if (input === ".exit") {
         rl.close();
+      } else {
+        await this.executeCommand(input);
       }
     });
 
@@ -31,8 +34,28 @@ export default class FileManager {
     });
   }
 
+  async executeCommand(input) {
+    try {
+      const [command, ...args] = input.split(" ");
+
+      switch (command) {
+        case "up":
+          this.fileSystem.goUp();
+          break;
+        case "cd":
+          await this.fileSystem.cd(args[0]);
+          break;
+      }
+    } catch (err) {
+      console.log("Operation failed. ", err.message);
+    }
+
+    this.printCurrentPath();
+  }
+
   printCurrentPath() {
-    console.log(`You are currently in ${this.currentPath}`);
+    const currentPath = this.fileSystem.currentPath;
+    console.log(`You are currently in ${currentPath}`);
   }
 
   onProgramExit() {
