@@ -44,7 +44,6 @@ export default class FileSystem {
       });
       console.table(files, ["name", "type"]);
     } catch (err) {
-      console.log(err);
       throw new Error("Cannot read files in the directory");
     }
   }

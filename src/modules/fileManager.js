@@ -1,12 +1,15 @@
 import os from "os";
 import readline from "readline";
 import FileSystem from "./fileSystem.js";
+import OperationSystem from "./os.js";
+import { getPath } from "../utils/getPath.js";
 
 export default class FileManager {
   constructor(username) {
     this.username = username;
     this.homePath = os.homedir();
     this.fileSystem = new FileSystem(this.homePath);
+    this.os = new OperationSystem();
   }
 
   startProject() {
@@ -47,6 +50,9 @@ export default class FileManager {
           break;
         case "ls":
           await this.fileSystem.ls();
+          break;
+        case "cat":
+          this.os.readFile(getPath(this.fileSystem.currentPath, args[0]));
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);
