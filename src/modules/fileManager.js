@@ -68,6 +68,9 @@ export default class FileManager {
         case "mv":
           await this.os.moveFile(args[0], args[1]);
           break;
+        case "rm":
+          await this.os.deleteFile(getPath(args[0]));
+          break;
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);

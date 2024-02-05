@@ -62,4 +62,13 @@ export default class OperationSystem {
       throw new Error("Cannot move file.");
     }
   }
+
+  async deleteFile(pathToFile) {
+    try {
+      await fs.access(pathToFile);
+      await fs.unlink(pathToFile);
+    } catch {
+      throw new Error("Cannot delete file.");
+    }
+  }
 }
