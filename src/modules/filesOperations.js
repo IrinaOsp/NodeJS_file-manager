@@ -4,7 +4,7 @@ import path from "path";
 import { getPath } from "../utils/getPath.js";
 import { pipeline } from "stream/promises";
 
-export default class OperationSystem {
+export default class FilesOperations {
   readFile(path) {
     const readStream = createReadStream(path);
     readStream.on("data", (data) => console.log(data.toString().trim()));

@@ -1,7 +1,7 @@
 import os from "os";
 import readline from "readline";
 import FileSystem from "./fileSystem.js";
-import OperationSystem from "./os.js";
+import FilesOperations from "./filesOperations.js";
 import { getPath } from "../utils/getPath.js";
 
 export default class FileManager {
@@ -9,7 +9,7 @@ export default class FileManager {
     this.username = username;
     this.homePath = os.homedir();
     this.fileSystem = new FileSystem(this.homePath);
-    this.os = new OperationSystem();
+    this.filesOperations = new FilesOperations();
   }
 
   startProject() {
@@ -52,25 +52,30 @@ export default class FileManager {
           await this.fileSystem.ls();
           break;
         case "cat":
-          this.os.readFile(getPath(this.fileSystem.currentPath, args[0]));
+          this.filesOperations.readFile(
+            getPath(this.fileSystem.currentPath, args[0])
+          );
           break;
         case "add":
-          await this.os.createEmptyFile(
+          await this.filesOperations.createEmptyFile(
             getPath(this.fileSystem.currentPath, args[0])
           );
           break;
         case "rn":
-          await this.os.renameFile(args[0], args[1]);
+          await this.filesOperations.renameFile(args[0], args[1]);
           break;
         case "cp":
-          await this.os.copyFile(args[0], args[1]);
+          await this.filesOperations.copyFile(args[0], args[1]);
           break;
         case "mv":
-          await this.os.moveFile(args[0], args[1]);
+          await this.filesOperations.moveFile(args[0], args[1]);
           break;
         case "rm":
-          await this.os.deleteFile(getPath(args[0]));
+          await this.filesOperations.deleteFile(getPath(args[0]));
           break;
+
+        default:
+          console.log("Invalid input.");
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);
