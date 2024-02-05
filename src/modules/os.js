@@ -1,7 +1,8 @@
-import { createReadStream } from "fs";
+import { createReadStream, createWriteStream } from "fs";
 import fs from "fs/promises";
 import path from "path";
 import { getPath } from "../utils/getPath.js";
+import { pipeline } from "stream/promises";
 
 export default class OperationSystem {
   readFile(path) {
@@ -31,6 +32,19 @@ export default class OperationSystem {
       await fs.rename(getPath(pathToFile), getPath(pathToFolder, newPath));
     } catch {
       throw new Error("Cannot rename file.");
+    }
+  }
+
+  async copyFile(pathToFile, pathToNewDir) {
+    try {
+      await fs.access(getPath(pathToFile));
+      await fs.access(getPath(pathToNewDir));
+      const fileName = path.basename(pathToFile);
+      const readStream = createReadStream(pathToFile);
+      const writeStream = createWriteStream(getPath(pathToNewDir, fileName));
+      await pipeline(readStream, writeStream);
+    } catch {
+      throw new Error("Cannot copy file.");
     }
   }
 }

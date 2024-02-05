@@ -62,6 +62,9 @@ export default class FileManager {
         case "rn":
           await this.os.renameFile(args[0], args[1]);
           break;
+        case "cp":
+          await this.os.copyFile(args[0], args[1]);
+          break;
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);
