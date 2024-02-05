@@ -65,6 +65,9 @@ export default class FileManager {
         case "cp":
           await this.os.copyFile(args[0], args[1]);
           break;
+        case "mv":
+          await this.os.moveFile(args[0], args[1]);
+          break;
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);

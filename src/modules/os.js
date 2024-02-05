@@ -47,4 +47,19 @@ export default class OperationSystem {
       throw new Error("Cannot copy file.");
     }
   }
+
+  async moveFile(pathToFile, pathToNewDir) {
+    try {
+      await fs.access(getPath(pathToFile));
+      await fs.access(getPath(pathToNewDir));
+      const fileName = path.basename(pathToFile);
+      const readStream = createReadStream(getPath(pathToFile));
+      const writeStream = createWriteStream(getPath(pathToNewDir, fileName));
+      await pipeline(readStream, writeStream);
+      await fs.unlink(pathToFile);
+    } catch (error) {
+      console.log(error);
+      throw new Error("Cannot move file.");
+    }
+  }
 }
