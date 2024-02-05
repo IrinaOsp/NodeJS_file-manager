@@ -53,6 +53,12 @@ export default class FileManager {
           break;
         case "cat":
           this.os.readFile(getPath(this.fileSystem.currentPath, args[0]));
+          break;
+        case "add":
+          await this.os.createEmptyFile(
+            getPath(this.fileSystem.currentPath, args[0])
+          );
+          break;
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);
