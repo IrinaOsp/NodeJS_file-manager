@@ -3,6 +3,8 @@ import readline from "readline";
 import FileSystem from "./fileSystem.js";
 import FilesOperations from "./filesOperations.js";
 import { getPath } from "../utils/getPath.js";
+import OperationSystem from "./os.js";
+import getHash from "./hashCalculator.js";
 
 export default class FileManager {
   constructor(username) {
@@ -10,6 +12,7 @@ export default class FileManager {
     this.homePath = os.homedir();
     this.fileSystem = new FileSystem(this.homePath);
     this.filesOperations = new FilesOperations();
+    this.os = new OperationSystem();
   }
 
   startProject() {
@@ -73,7 +76,12 @@ export default class FileManager {
         case "rm":
           await this.filesOperations.deleteFile(getPath(args[0]));
           break;
-
+        case "os":
+          this.os.getOSInfo(args[0]);
+          break;
+        case "hash":
+          await getHash(getPath(args[0]));
+          break;
         default:
           console.log("Invalid input.");
       }
