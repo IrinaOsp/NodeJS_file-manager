@@ -59,6 +59,9 @@ export default class FileManager {
             getPath(this.fileSystem.currentPath, args[0])
           );
           break;
+        case "rn":
+          await this.os.renameFile(args[0], args[1]);
+          break;
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);

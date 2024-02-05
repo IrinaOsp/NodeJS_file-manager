@@ -1,5 +1,7 @@
 import { createReadStream } from "fs";
 import fs from "fs/promises";
+import path from "path";
+import { getPath } from "../utils/getPath.js";
 
 export default class OperationSystem {
   readFile(path) {
@@ -15,6 +17,20 @@ export default class OperationSystem {
       await fs.writeFile(path, "", { flag: "wx" });
     } catch {
       throw new Error("Cannot create empty file.");
+    }
+  }
+
+  async renameFile(pathToFile, newPath) {
+    try {
+      const pathToFolder = pathToFile
+        .split(path.sep)
+        .slice(0, -1)
+        .join(path.sep);
+      await fs.access(pathToFile);
+      await fs.access(pathToFolder);
+      await fs.rename(getPath(pathToFile), getPath(pathToFolder, newPath));
+    } catch {
+      throw new Error("Cannot rename file.");
     }
   }
 }
