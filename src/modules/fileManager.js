@@ -5,6 +5,7 @@ import FilesOperations from "./filesOperations.js";
 import { getPath } from "../utils/getPath.js";
 import OperationSystem from "./os.js";
 import getHash from "./hashCalculator.js";
+import compressFile from "./compress.js";
 
 export default class FileManager {
   constructor(username) {
@@ -81,6 +82,11 @@ export default class FileManager {
           break;
         case "hash":
           await getHash(getPath(args[0]));
+          break;
+        case "compress":
+          await compressFile(getPath(args[0]), getPath(args[1]));
+          break;
+        case "decompress":
           break;
         default:
           console.log("Invalid input.");
