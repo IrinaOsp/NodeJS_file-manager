@@ -6,7 +6,7 @@ import { getPath } from "../utils/getPath.js";
 
 const compressFile = async (pathToFile, pathToDestination) => {
   try {
-    const fileName = path.basename(pathToFile).replace(/\.\w+$/, ".br");
+    const fileName = path.basename(pathToFile).concat(".br");
     const readStream = createReadStream(pathToFile);
     const writeStream = createWriteStream(getPath(pathToDestination, fileName));
     const compressStream = createBrotliCompress();
