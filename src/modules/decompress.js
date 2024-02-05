@@ -7,21 +7,19 @@ import { getPath } from "../utils/getPath.js";
 const decompressFile = async (pathToFile, pathToDestination) => {
   try {
     const compressedName = path.basename(pathToFile);
-    if (compressedName.lastIndexOf(".br") === -1) {
-      throw new Error("Cannot decompress file.");
+    const newName = path.basename(pathToDestination);
+    if (path.extname(compressedName) !== ".br") {
+      throw new Error("Enter compressed file name with extension .br");
     }
-    const fileName = compressedName.slice(0, compressedName.lastIndexOf(".br"));
-    const fileNameWithExtension =
-      fileName.lastIndexOf(".") !== -1 ? fileName : fileName.concat(".txt");
+    if (path.extname(newName) === "") {
+      throw new Error("Enter file name with extension");
+    }
     const readStream = createReadStream(pathToFile);
-    const writeStream = createWriteStream(
-      getPath(pathToDestination, fileNameWithExtension)
-    );
+    const writeStream = createWriteStream(getPath(pathToDestination));
     const decompressStream = createBrotliDecompress();
     await pipeline(readStream, decompressStream, writeStream);
   } catch (err) {
-    console.log(err);
-    throw new Error("Cannot compress file.");
+    throw new Error("Cannot compress file. ", err.toString());
   }
 };
 
