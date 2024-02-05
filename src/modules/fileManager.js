@@ -45,6 +45,8 @@ export default class FileManager {
         case "cd":
           await this.fileSystem.cd(args[0]);
           break;
+        case "ls":
+          await this.fileSystem.ls();
       }
     } catch (err) {
       console.log("Operation failed. ", err.message);

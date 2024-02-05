@@ -1,5 +1,5 @@
 import path from "path";
-import { access } from "fs/promises";
+import { access, readdir } from "fs/promises";
 import { getPath } from "../utils/getPath.js";
 
 export default class FileSystem {
@@ -29,6 +29,23 @@ export default class FileSystem {
       } catch {
         throw new Error("Cannot access directory");
       }
+    }
+  }
+
+  async ls() {
+    try {
+      const files = await readdir(getPath(this.currentPath), {
+        withFileTypes: true,
+      }).then((files) => {
+        return files.map((file) => ({
+          name: file.name,
+          type: file.isDirectory() ? "directory" : "file",
+        }));
+      });
+      console.table(files, ["name", "type"]);
+    } catch (err) {
+      console.log(err);
+      throw new Error("Cannot read files in the directory");
     }
   }
 }
