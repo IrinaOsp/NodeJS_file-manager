@@ -3,35 +3,39 @@ import fs from "fs/promises";
 import path from "path";
 import { getPath } from "../utils/getPath.js";
 import { pipeline } from "stream/promises";
+import isValidFileName from "../utils/validateFileName.js";
 
 export default class FilesOperations {
-  readFile(path) {
-    const readStream = createReadStream(path);
-    readStream.on("data", (data) => console.log(data.toString().trim()));
-    readStream.on("error", () => {
+  async readFile(pathToFile) {
+    try {
+      const readStream = createReadStream(pathToFile);
+      readStream.on("data", (data) => console.log(data.toString().trim()));
+    } catch {
       throw new Error("Cannot read file content of the file");
-    });
+    }
   }
 
-  async createEmptyFile(path) {
+  async createEmptyFile(fileName) {
     try {
-      await fs.writeFile(path, "", { flag: "wx" });
+      await fs.writeFile(fileName, "", { flag: "wx" });
     } catch {
       throw new Error("Cannot create empty file.");
     }
   }
 
-  async renameFile(pathToFile, newPath) {
+  async renameFile(pathToFile, newFileName) {
     try {
-      const pathToFolder = pathToFile
-        .split(path.sep)
-        .slice(0, -1)
-        .join(path.sep);
       await fs.access(pathToFile);
-      await fs.access(pathToFolder);
-      await fs.rename(getPath(pathToFile), getPath(pathToFolder, newPath));
-    } catch {
-      throw new Error("Cannot rename file.");
+      console.log(isValidFileName(newFileName));
+      if (!isValidFileName(newFileName)) {
+        throw new Error("Enter valid file name");
+      }
+      await fs.rename(
+        getPath(pathToFile),
+        path.join(getPath(path.dirname(pathToFile)), newFileName)
+      );
+    } catch (err) {
+      throw new Error(err.message || "Cannot rename file.");
     }
   }
 
@@ -41,7 +45,9 @@ export default class FilesOperations {
       await fs.access(getPath(pathToNewDir));
       const fileName = path.basename(pathToFile);
       const readStream = createReadStream(pathToFile);
-      const writeStream = createWriteStream(getPath(pathToNewDir, fileName));
+      const writeStream = createWriteStream(
+        path.join(getPath(pathToNewDir), fileName)
+      );
       await pipeline(readStream, writeStream);
     } catch {
       throw new Error("Cannot copy file.");
@@ -50,23 +56,17 @@ export default class FilesOperations {
 
   async moveFile(pathToFile, pathToNewDir) {
     try {
-      await fs.access(getPath(pathToFile));
-      await fs.access(getPath(pathToNewDir));
-      const fileName = path.basename(pathToFile);
-      const readStream = createReadStream(getPath(pathToFile));
-      const writeStream = createWriteStream(getPath(pathToNewDir, fileName));
-      await pipeline(readStream, writeStream);
-      await fs.unlink(pathToFile);
+      await this.copyFile(pathToFile, pathToNewDir);
+      await this.deleteFile(pathToFile);
     } catch (error) {
-      console.log(error);
       throw new Error("Cannot move file.");
     }
   }
 
   async deleteFile(pathToFile) {
     try {
-      await fs.access(pathToFile);
-      await fs.unlink(pathToFile);
+      await fs.access(getPath(pathToFile));
+      await fs.unlink(getPath(pathToFile));
     } catch {
       throw new Error("Cannot delete file.");
     }

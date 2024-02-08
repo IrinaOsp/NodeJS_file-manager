@@ -7,6 +7,8 @@ import OperationSystem from "./os.js";
 import getHash from "./hashCalculator.js";
 import compressFile from "./compress.js";
 import decompressFile from "./decompress.js";
+import { cwd } from "process";
+import checkArgs from "../utils/checkArgs.js";
 
 export default class FileManager {
   constructor(username) {
@@ -44,7 +46,11 @@ export default class FileManager {
 
   async executeCommand(input) {
     try {
-      const [command, ...args] = input.split(" ");
+      const [command, ...initialArgs] = input.split(" ");
+      const args = checkArgs(initialArgs);
+      if (args.length > 2) {
+        throw new Error("Too many arguments or incorrect path");
+      }
 
       switch (command) {
         case "up":
@@ -57,14 +63,10 @@ export default class FileManager {
           await this.fileSystem.ls();
           break;
         case "cat":
-          this.filesOperations.readFile(
-            getPath(this.fileSystem.currentPath, args[0])
-          );
+          await this.filesOperations.readFile(getPath(args[0]));
           break;
         case "add":
-          await this.filesOperations.createEmptyFile(
-            getPath(this.fileSystem.currentPath, args[0])
-          );
+          await this.filesOperations.createEmptyFile(getPath(args[0]));
           break;
         case "rn":
           await this.filesOperations.renameFile(args[0], args[1]);
@@ -101,8 +103,7 @@ export default class FileManager {
   }
 
   printCurrentPath() {
-    const currentPath = this.fileSystem.currentPath;
-    console.log(`You are currently in ${currentPath}`);
+    console.log(`You are currently in ${cwd()}`);
   }
 
   onProgramExit() {

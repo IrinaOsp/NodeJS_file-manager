@@ -29,12 +29,10 @@ export default class FileSystem {
     } else {
       try {
         const newPath = getPath(pathCommand);
-        console.log("newPath", newPath);
         await access(newPath);
         chdir(newPath);
         this.currentPath = cwd();
-      } catch (err) {
-        console.log(err);
+      } catch {
         throw new Error("Cannot access directory");
       }
     }
