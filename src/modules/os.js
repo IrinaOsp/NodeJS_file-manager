@@ -24,7 +24,10 @@ export default class OperationSystem {
 
   getCPUsInfo() {
     const data = os.cpus().map((cpu) => {
-      return { model: cpu.model.trim(), speed: cpu.speed };
+      return {
+        model: cpu.model.trim(),
+        speed: `${(cpu.speed / 1000).toFixed(2)} GHz`,
+      };
     });
     console.log(`Overall amount of CPUs: ${JSON.stringify(os.cpus().length)}`);
     console.table(data, ["model", "speed"]);
