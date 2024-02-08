@@ -1,21 +1,25 @@
-import path from "path";
+import { dirname } from "path";
 import { access, readdir } from "fs/promises";
 import { getPath } from "../utils/getPath.js";
+import { chdir, cwd } from "process";
 
 export default class FileSystem {
   constructor(homePath) {
     this.homePath = homePath;
-    this.currentPath = homePath;
+    chdir(this.homePath);
+    this.currentPath = cwd();
   }
 
   goUp() {
-    if (this.currentPath === this.homePath) {
-      throw new Error("Cannot go up from home directory");
-    } else {
-      this.currentPath = this.currentPath
-        .split(path.sep)
-        .slice(0, -1)
-        .join(path.sep);
+    try {
+      this.currentPath = cwd();
+      const upperDir = dirname(this.currentPath);
+      if (upperDir === this.currentPath) {
+        throw new Error("Cannot go up from root directory");
+      }
+      chdir(upperDir);
+    } catch {
+      throw new Error("Cannot go up from root directory");
     }
   }
 
@@ -24,8 +28,9 @@ export default class FileSystem {
       this.goUp();
     } else {
       try {
-        await access(getPath(this.currentPath, path));
-        this.currentPath = `${this.currentPath}\\${path}`;
+        await access(getPath(cwd(), path));
+        chdir(getPath(cwd(), path));
+        this.currentPath = cwd();
       } catch {
         throw new Error("Cannot access directory");
       }
@@ -37,10 +42,15 @@ export default class FileSystem {
       const files = await readdir(getPath(this.currentPath), {
         withFileTypes: true,
       }).then((files) => {
-        return files.map((file) => ({
-          name: file.name,
-          type: file.isDirectory() ? "directory" : "file",
-        }));
+        return files
+          .map((file) => ({
+            name: file.name,
+            type: file.isFile() ? "file" : "directory",
+          }))
+          .sort(
+            (a, b) =>
+              a.name.localeCompare(b.name) && a.type.localeCompare(b.type)
+          );
       });
       console.table(files, ["name", "type"]);
     } catch (err) {
