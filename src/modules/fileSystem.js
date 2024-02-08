@@ -23,15 +23,18 @@ export default class FileSystem {
     }
   }
 
-  async cd(path) {
-    if (path === ".." || path === "../") {
+  async cd(pathCommand) {
+    if (pathCommand === ".." || pathCommand === "../") {
       this.goUp();
     } else {
       try {
-        await access(getPath(cwd(), path));
-        chdir(getPath(cwd(), path));
+        const newPath = getPath(pathCommand);
+        console.log("newPath", newPath);
+        await access(newPath);
+        chdir(newPath);
         this.currentPath = cwd();
-      } catch {
+      } catch (err) {
+        console.log(err);
         throw new Error("Cannot access directory");
       }
     }
@@ -39,7 +42,7 @@ export default class FileSystem {
 
   async ls() {
     try {
-      const files = await readdir(getPath(this.currentPath), {
+      const files = await readdir(cwd(), {
         withFileTypes: true,
       }).then((files) => {
         return files
