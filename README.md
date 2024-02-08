@@ -15,7 +15,7 @@ Replace `your_username` with your username.
 
 Upon starting the program, you will see the welcome message and the current working directory. The program prompts for commands and waits for user input.
 
-**Use folders without spaces! If path to your folder contains spaces replace them with \_ or -**
+**Use folders without spaces! If path to your folder contains spaces replace them with \_ or - or use quotes for path**
 
 ## Available Commands
 
